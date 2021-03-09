@@ -64,6 +64,7 @@ div:focus {
   box-sizing: border-box;
   max-height: calc(100vh - 50px);
   overflow: auto;
+  padding: 20px;
   .filter-container {
     margin-bottom: 10px;
     vertical-align: middle;
@@ -71,6 +72,9 @@ div:focus {
       margin-right: 10px;
       margin-bottom: 10px;
       margin-left: 0;
+    }
+    .filter-input {
+      width: 250px;
     }
   }
   .pagination-container {

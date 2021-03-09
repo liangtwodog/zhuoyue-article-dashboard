@@ -3,17 +3,17 @@
 import Layout from '@/layout'
 
 const moduleRouter = {
-  name: 'statistics',
-  path: '/statistics',
+  name: 'browse',
+  path: '/browse',
   component: Layout,
-  meta: { title: '数据统计' },
-  order: 1,
+  meta: { title: '浏览记录' },
+  order: 4,
   children: [
     {
       name: 'index',
       path: 'index',
-      component: () => import('@/views/statistics'),
-      meta: { title: '数据统计' }
+      component: () => import('@/views/browse/list'),
+      meta: { title: '浏览记录' }
     }
   ]
 }
