@@ -1,10 +1,10 @@
 <template>
   <div v-loading="listLoading" class="app-container" element-loading-text="给我一点时间">
     <div class="filter-container">
-      <el-input v-model="search.nickname" class="filter-item filter-input" clearable placeholder="openid" />
+      <el-input v-model="search.weapp_openid" class="filter-item filter-input" clearable placeholder="openid" />
       <el-input v-model="search.phone" class="filter-item filter-input" clearable placeholder="手机号" />
-      <el-input v-model="search.phone" class="filter-item filter-input" clearable placeholder="浏览文章" />
-      <el-input v-model="search.nickname" class="filter-item filter-input" clearable placeholder="浏览时长" />
+      <el-input v-model="search.title" class="filter-item filter-input" clearable placeholder="浏览文章" />
+      <el-input v-model="search.view_time" class="filter-item filter-input" clearable placeholder="浏览时长" />
       <el-date-picker
         v-model="search.time"
         class="filter-item"
@@ -20,22 +20,22 @@
     </div>
     <div class="bodyContent">
       <el-table ref="eltable" :data="tableData" border style="width: 100%">
-        <el-table-column prop="openid" label="openid" align="center" />
-        <el-table-column prop="phone" label="手机号" align="center" />
-        <el-table-column prop="nickname" label="浏览文章" align="center" />
+        <el-table-column prop="user.weapp_openid" label="openid" align="center" />
+        <el-table-column prop="user.phone" label="手机号" align="center" />
+        <el-table-column prop="article.title" label="浏览文章" align="center" />
         <el-table-column label="浏览时长" align="center">
           <template slot-scope="scope">
-            {{ scope.row.headimgurl }}s
+            {{ scope.row.view_time }}s
           </template>
         </el-table-column>
         <el-table-column label="进入时间" align="center">
           <template slot-scope="scope">
-            {{ setTime(scope.row.created_at) }}
+            {{ setTime(scope.row.create_time) }}
           </template>
         </el-table-column>
         <el-table-column label="退出时间" align="center">
           <template slot-scope="scope">
-            {{ setTime(scope.row.created_at) }}
+            {{ setTime(scope.row.exit_time) }}
           </template>
         </el-table-column>
       </el-table>
@@ -52,9 +52,10 @@ export default {
     return {
       search: {
         phone: '',
-        relation_salesman_name: '',
+        weapp_openid: '',
+        view_time: '',
         time: '',
-        nickname: ''
+        title: ''
       },
       listLoading: false,
       tableData: [],
@@ -91,9 +92,10 @@ export default {
     resetData() {
       this.search = {
         phone: '',
-        relation_salesman_name: '',
+        weapp_openid: '',
+        view_time: '',
         time: '',
-        nickname: ''
+        title: ''
       }
       this.pagination = {
         currentPage: 1,
@@ -104,16 +106,15 @@ export default {
     },
     fetchData() {
       this.listLoading = true
+      const { time, ...searchTime } = this.search
       const requestData = {
         page: this.pagination.currentPage,
         pagesize: this.pagination.pageSize,
-        phone: this.search.phone,
-        relation_salesman_name: this.search.relation_salesman_name,
-        nickname: this.search.nickname
+        ...searchTime
       }
-      if (this.search.time.length === 2) {
-        requestData.start_time = moment(this.search.time[0]).unix()
-        requestData.end_time = moment(this.search.time[1]).unix()
+      if (time.length === 2) {
+        requestData.start = moment(time[0]).unix()
+        requestData.end = moment(time[1]).unix()
       }
       requestApi.getList(requestData).then(response => {
         const data = response.data
@@ -127,22 +128,21 @@ export default {
     },
     async getExcel() {
       this.listLoading = true
+      const { time, ...searchTime } = this.search
       const requestData = {
         page: this.pagination.currentPage,
         pagesize: this.pagination.pageSize,
-        phone: this.search.phone,
-        relation_salesman_name: this.search.relation_salesman_name,
-        nickname: this.search.nickname
+        ...searchTime
       }
-      if (this.search.time.length === 2) {
-        requestData.start_time = moment(this.search.time[0]).unix()
-        requestData.end_time = moment(this.search.time[1]).unix()
+      if (time.length === 2) {
+        requestData.start = moment(time[0]).unix()
+        requestData.end = moment(time[1]).unix()
       }
       await requestApi.getExcel(requestData).then(res => {
         const blob = new Blob([res.data], { type: 'application/vdn.ms-excel' })
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement('a')
-        a.download = '用户数据.xlsx'
+        a.download = '浏览记录数据.xlsx'
         a.href = url
         a.click()
         this.$message.success('导出成功')

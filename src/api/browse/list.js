@@ -3,14 +3,14 @@ import request from '@/utils/request'
 export default {
   getList(params) {
     return request({
-      url: '/admin/user/list',
+      url: '/article/view/logs',
       method: 'get',
       params
     })
   },
   getExcel(params) {
     return request({
-      url: `/admin/user/list/export`,
+      url: `/article/view/log/export`,
       method: 'get',
       params,
       responseType: 'blob',
