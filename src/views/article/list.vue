@@ -1,15 +1,29 @@
 <template>
   <div v-loading="pageLoading" class="app-container bannerList" element-loading-text="给我一点时间">
     <div class="filter-container">
-      <div class="infoBtn">
-        <div class="title">公众号信息授权</div>
-        <el-switch
-          v-model="infoStatus"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          :active-value="1"
-          :inactive-value="0"
-        />
+      <div class="articleConfig">
+        <div class="infoBtn">
+          <div class="title">文章全遮</div>
+          <el-switch
+            v-model.number="articleConfig.shade_type"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            :active-value="1"
+            :inactive-value="2"
+            @change="setArticleConfs"
+          />
+        </div>
+        <div class="infoBtn">
+          <div class="title">公众号信息授权</div>
+          <el-switch
+            v-model.number="articleConfig.info_auth"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            :active-value="1"
+            :inactive-value="2"
+            @change="setArticleConfs"
+          />
+        </div>
       </div>
       <el-button class="filter-item" type="primary" @click="$router.push('/article/details/new')">添加文章</el-button>
     </div>
@@ -17,15 +31,15 @@
       <el-table ref="eltable" :data="tableData" border style="width: 100%">
         <el-table-column label="图片" align="center">
           <template slot-scope="scope">
-            <img :src="scope.row.goods_image" style="width: 60px;">
+            <img :src="scope.row.cover.thumb" style="width: 60px;">
           </template>
         </el-table-column>
-        <el-table-column prop="openid" label="标题" align="center" />
-        <el-table-column prop="phone" label="排序" align="center" />
+        <el-table-column prop="title" label="标题" align="center" />
+        <el-table-column prop="sort" label="排序" align="center" />
         <el-table-column label="上下架" align="center">
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.goods_state"
+              v-model="scope.row.status"
               active-color="#13ce66"
               inactive-color="#ff4949"
               :active-value="1"
@@ -53,6 +67,10 @@ export default {
       pageLoading: false,
       infoStatus: 0,
       tableData: [],
+      articleConfig: {
+        shade_type: 2,
+        info_auth: 2
+      },
       pagination: {
         currentPage: 1,
         pageSize: 10,
@@ -62,8 +80,32 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.getArticleConfs()
   },
   methods: {
+    async getArticleConfs() {
+      this.pageLoading = true
+      try {
+        const response = await requestApi.getArticleConfs()
+        this.articleConfig = response.data
+        this.pageLoading = false
+      } catch (err) {
+        this.pageLoading = false
+      }
+    },
+    async setArticleConfs() {
+      this.pageLoading = true
+      const requestData = {
+        ...this.articleConfig
+      }
+      try {
+        await requestApi.setArticleConfs(requestData)
+        this.$message.success('修改成功')
+        this.pageLoading = false
+      } catch (err) {
+        this.pageLoading = false
+      }
+    },
     handleSizeChange(val) {
       this.pagination.pageSize = val
       this.fetchData()
@@ -100,7 +142,7 @@ export default {
       }
     },
     async setStatus(rowsData) {
-      const title = rowsData.goods_state === 1 ? '上架' : '下架'
+      const title = rowsData.status === 1 ? '上架' : '下架'
       this.$confirm(`此操作将永久${title}该文章, 是否继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -122,11 +164,12 @@ export default {
           type: 'info',
           message: `已取消${title}`
         })
-        rowsData.goods_state = rowsData.goods_state === 1 ? 2 : 1
+        rowsData.status = rowsData.status === 1 ? 2 : 1
       })
     },
     edit(id) {
-      window.open(`${window.location.origin}${window.location.pathname}#/article/details/${id}`)
+      this.$router.push(`/article/details/${id}`)
+      // window.open(`${window.location.origin}${window.location.pathname}#/article/details/${id}`)
     }
   }
 }
@@ -136,13 +179,18 @@ export default {
     display: flex;
     align-content: center;
     justify-content: space-between;
-    .infoBtn {
+    .articleConfig {
       display: flex;
       align-content: center;
-      .title {
-        font-size: 16px;
-        font-weight: 500;
-        margin-right: 10px;
+      .infoBtn {
+        display: flex;
+        align-content: center;
+        margin-right: 40px;
+        .title {
+          font-size: 16px;
+          font-weight: 500;
+          margin-right: 10px;
+        }
       }
     }
   }

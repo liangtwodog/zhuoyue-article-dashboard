@@ -2,8 +2,8 @@
   <div v-loading="pageLoading" class="app-container" element-loading-text="给我一点时间">
     <el-form ref="form" class="content" :model="form" label-width="80px" :rules="rules">
       <div class="left">
-        <el-form-item label="封面" prop="img">
-          <upload-img v-model="form" :model-key="'img'" :name="'goodsImage'" :width="'100px'" :height="'auto'" />
+        <el-form-item label="封面" prop="cover">
+          <upload-img v-model="form" :model-key="'cover'" :name="'goodsImage'" :width="'100px'" :height="'auto'" />
         </el-form-item>
         <el-form-item label="文章标题" prop="title">
           <el-input v-model.trim="form.title" style="width: 250px" rows="4" type="textarea" class="input" placeholder="请输入文章标题" />
@@ -36,13 +36,14 @@ export default {
     return {
       pageLoading: false,
       form: {
-        img: '',
+        cover: '',
         title: '',
         sort: 0,
         content: ''
       },
+      cover: {},
       rules: {
-        img: [
+        cover: [
           {
             required: true, message: '请选择封面图', trigger: 'change'
           }
@@ -73,7 +74,7 @@ export default {
   methods: {
     async getDetails() {
       const response = await requestApi.show({ id: this.$route.params.id })
-      this.form = response
+      this.form = response.data
     },
     async onSubmit() {
       this.$refs.form.validate(async(valid) => {
@@ -82,7 +83,7 @@ export default {
           this.pageLoading = true
           if (this.$route.params.id !== 'new') {
             try {
-              await requestApi.update()
+              await requestApi.update(this.form)
               this.getDetails()
               this.$message.success('更新成功')
               this.pageLoading = false
@@ -92,8 +93,7 @@ export default {
             }
           } else {
             try {
-              await requestApi.create()
-              this.$message.success('创建成功')
+              await requestApi.create(this.form)
               this.pageLoading = false
               this.$router.push('/article/index')
             } catch (err) {

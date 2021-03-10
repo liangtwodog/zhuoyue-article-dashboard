@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export default {
   getList(params) {
     return request({
-      url: '/admin/user/list',
+      url: '/articles',
       method: 'get',
       params
     })
@@ -11,7 +11,7 @@ export default {
   create(param) {
     const { ...data } = param
     return request({
-      url: '/roles',
+      url: '/articles',
       method: 'post',
       data
     })
@@ -19,7 +19,7 @@ export default {
   update(param) {
     const { id, ...data } = param
     return request({
-      url: `/roles/${id}`,
+      url: `/articles/${id}`,
       method: 'put',
       data
     })
@@ -27,15 +27,28 @@ export default {
   show(param) {
     const { id } = param
     return request({
-      url: `/roles/${id}`,
+      url: `/articles/${id}`,
       method: 'get'
     })
   },
   status(param) {
     const { id } = param
     return request({
-      url: `/admins/${id}/status`,
+      url: `/articles/${id}/status`,
       method: 'get'
+    })
+  },
+  getArticleConfs() {
+    return request({
+      url: `/article/confs`,
+      method: 'get'
+    })
+  },
+  setArticleConfs(data) {
+    return request({
+      url: '/article/confs',
+      method: 'post',
+      data
     })
   }
 }

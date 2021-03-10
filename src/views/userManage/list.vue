@@ -37,7 +37,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="phone" label="手机号" align="center" />
-        <el-table-column prop="phone" label="来源用户" align="center" />
+        <el-table-column prop="source_id" label="来源用户" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.source_id ? scope.row.source_id : '无' }}
+          </template>
+        </el-table-column>
         <el-table-column label="来源时间" align="center">
           <template slot-scope="scope">
             {{ setTime(scope.row.source_time) }}

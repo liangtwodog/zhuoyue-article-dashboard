@@ -68,8 +68,9 @@ export default {
       })
     },
     uploadSuccess(data, file, fileList) {
+      console.log(data.data)
       try {
-        this.$emit('upload-success', data)
+        this.$emit('upload-success', data.data)
       } catch (err) {
         this.uploadError(err)
       }
