@@ -102,13 +102,13 @@ export default {
       })
     },
     getNumber(time) {
+      console.log('time', time)
       this.listLoading = true
       const requestData = {
-        start_time: moment(time[0]).unix(),
-        end_time: moment(time[1]).unix(),
-        name: 'orderAmountSection'
+        start: moment(time[0]).unix(),
+        end: moment(time[1]).unix()
       }
-      statisticsApi.getLineData(requestData).then(async res => {
+      statisticsApi.getUserViewLineData(requestData).then(async res => {
         const data = res.data
         this.drawLine(this.setChartData(time, data))
       })

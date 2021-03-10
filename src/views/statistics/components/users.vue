@@ -104,11 +104,10 @@ export default {
     getNumber(time) {
       this.listLoading = true
       const requestData = {
-        start_time: moment(time[0]).unix(),
-        end_time: moment(time[1]).unix(),
-        name: 'userSection'
+        start: moment(time[0]).unix(),
+        end: moment(time[1]).unix()
       }
-      statisticsApi.getLineData(requestData).then(async res => {
+      statisticsApi.getUserTotalLineData(requestData).then(async res => {
         const data = res.data
         this.drawLine(this.setChartData(time, data))
       })

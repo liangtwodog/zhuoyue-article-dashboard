@@ -6,23 +6,23 @@
     <div class="headerDiv">
       <div class="item">
         <div class="title">用户总数</div>
-        <div class="nb">{{ allData[1].value }}</div>
+        <div class="nb">{{ allData.user }}</div>
       </div>
       <div class="item">
         <div class="title">授权手机号用户总数</div>
-        <div class="nb">{{ allData[0].value }}</div>
+        <div class="nb">{{ allData.authUser }}</div>
       </div>
       <div class="item">
         <div class="title">文章浏览人数</div>
-        <div class="nb">{{ allData[2].value }}</div>
+        <div class="nb">{{ allData.article_view_user }}</div>
       </div>
       <div class="item">
         <div class="title">文章浏览次数</div>
-        <div class="nb">{{ allData[3].value }}</div>
+        <div class="nb">{{ allData.article_view_num }}</div>
       </div>
       <div class="item">
         <div class="title">文章平均浏览时常</div>
-        <div class="nb">{{ allData[3].value }}</div>
+        <div class="nb">{{ allData.article_view_time_avg }}</div>
       </div>
     </div>
     <div class="lineData">
@@ -170,24 +170,13 @@ export default {
       browsetableData: [],
       usersActive: 1,
       userstableData: [],
-      allData: [
-        {
-          id: 'userConsumeTotal',
-          value: 0
-        },
-        {
-          id: 'userTotal',
-          value: 0
-        },
-        {
-          id: 'orderNumber',
-          value: 0
-        },
-        {
-          id: 'orderSums',
-          value: 0
-        }
-      ]
+      allData: {
+        user: 0,
+        article_view_user: 0,
+        article_view_num: 0,
+        article_view_time_avg: 0,
+        authUser: 0
+      }
     }
   },
   async mounted() {
@@ -197,34 +186,33 @@ export default {
         .unix() * 1000,
       moment().unix() * 1000
     ]
-    for (let i = 0; i < this.allData.length; i++) {
-      const data = await statisticsApi.getAllData({ name: this.allData[i].id })
-      this.allData[i].value = data.data.total
-    }
-    await this.distributorActiveFu(this.distributorActive)
-    await this.browseActiveFu(this.browseActive)
-    await this.usersActiveFu(this.usersActive)
-    this.$nextTick(() => {
-      this.$refs.member.getNumber(this.time)
-    })
+    this.getAllData()
+    setTimeout(() => {
+      this.$refs.visitUser.getNumber(this.time)
+    }, 2000)
   },
   methods: {
-    async getGoodsList(title) {
+    getAllData() {
+      statisticsApi
+        .getAllData()
+        .then(response => {
+          this.allData = response.data
+        })
+    },
+    async getArticleViewList(type) {
       this.listLoading = true
       await statisticsApi
-        .getGoodsList({ name: 'goodsTop', top_number: 5, order_field: title })
+        .getArticleViewList({ type })
         .then(response => {
-          this.goodstableData = response.data
+          this.browsetableData = response.data
         })
       this.listLoading = false
     },
-    async getUsersList(title) {
+    async getUserViewList(type) {
       this.listLoading = true
       await statisticsApi
-        .getMemberList({
-          name: 'userConsumeTop',
-          top_number: 10,
-          order_field: title
+        .getUserViewList({
+          type
         })
         .then(response => {
           this.userstableData = response.data
@@ -266,13 +254,13 @@ export default {
     },
     async usersActiveFu(index) {
       this.usersActive = index
-      const title = index === 1 ? 'buyer_total' : 'order_number'
-      await this.getUsersList(title)
+      const title = index === 1 ? 'num' : 'time'
+      await this.getUserViewList(title)
     },
     async browseActiveFu(index) {
       this.browseActive = index
-      const title = index === 1 ? 'goods_salenum' : 'order_amount'
-      await this.getGoodsList(title)
+      const title = index === 1 ? 'user' : 'num'
+      await this.getArticleViewList(title)
     }
   }
 }
