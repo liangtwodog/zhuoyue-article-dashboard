@@ -44,11 +44,15 @@
         </el-table-column>
         <el-table-column label="来源时间" align="center">
           <template slot-scope="scope">
-            {{ setTime(scope.row.source_time) }}
+            {{ scope.row.source_time ? setTime(scope.row.source_time) : '无' }}
           </template>
         </el-table-column>
         <el-table-column prop="article_view_num" label="文章浏览次数" align="center" />
-        <el-table-column prop="article_view_time" label="文章浏览时长" align="center" />
+        <el-table-column prop="article_view_time" label="文章浏览时长" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.article_view_time }}S
+          </template>
+        </el-table-column>
         <el-table-column label="ip所在地区" align="center">
           <template slot-scope="scope">
             {{ scope.row.province }}-{{ scope.row.city }}
@@ -93,7 +97,7 @@ export default {
   },
   methods: {
     setTime(time) {
-      return moment(time).format('YYYY-MM-DD HH:mm:SS')
+      return moment(time * 1000).format('YYYY-MM-DD HH:mm:ss')
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val

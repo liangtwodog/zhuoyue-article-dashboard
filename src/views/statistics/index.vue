@@ -21,8 +21,8 @@
         <div class="nb">{{ allData.article_view_num }}</div>
       </div>
       <div class="item">
-        <div class="title">文章平均浏览时常</div>
-        <div class="nb">{{ allData.article_view_time_avg }}</div>
+        <div class="title">文章平均浏览时长</div>
+        <div class="nb">{{ allData.article_view_time_avg }}s</div>
       </div>
     </div>
     <div class="lineData">

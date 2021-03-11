@@ -71,7 +71,11 @@ export default {
   },
   methods: {
     setTime(time) {
-      return moment(time).format('YYYY-MM-DD HH:mm:SS')
+      if (time) {
+        return moment(time * 1000).format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        return '无'
+      }
     },
     handleSizeChange(val) {
       this.pagination.pageSize = val
