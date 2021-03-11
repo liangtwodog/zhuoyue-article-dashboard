@@ -72,11 +72,11 @@
           <el-table :data="browsetableData" border>
             <el-table-column label="文章" align="center">
               <template slot-scope="scope">
-                <div class="userItem">
+                <div class="infoItem">
                   <div>
-                    <img :src="scope.row.headimgurl">
-                    <div class="name">
-                      {{ scope.row.nickname }}
+                    <img :src="scope.row.article.cover.thumb">
+                    <div class="title">
+                      {{ scope.row.article.title }}
                     </div>
                   </div>
                 </div>
@@ -84,12 +84,12 @@
             </el-table-column>
             <el-table-column label="浏览人数" align="center">
               <template slot-scope="scope">
-                {{ scope.row.buyer_total }}
+                {{ scope.row.user }}
               </template>
             </el-table-column>
             <el-table-column label="浏览次数" align="center">
               <template slot-scope="scope">
-                {{ scope.row.order_number }}
+                {{ scope.row.num }}
               </template>
             </el-table-column>
           </el-table>
@@ -126,7 +126,7 @@
                   </div>
                   <div class="info">
                     <div class="openid">
-                      {{ scope.row.nickname }}
+                      {{ scope.row.weapp_openid }}
                     </div>
                     <div class="phone">
                       {{ scope.row.phone }}
@@ -137,12 +137,12 @@
             </el-table-column>
             <el-table-column label="浏览文章次数" align="center">
               <template slot-scope="scope">
-                {{ scope.row.buyer_total }}
+                {{ scope.row.article_view_num }}
               </template>
             </el-table-column>
             <el-table-column label="浏览总时长" align="center">
               <template slot-scope="scope">
-                {{ scope.row.order_number }}
+                {{ scope.row.article_view_time }}
               </template>
             </el-table-column>
           </el-table>
@@ -187,6 +187,8 @@ export default {
       moment().unix() * 1000
     ]
     this.getAllData()
+    this.getArticleViewList()
+    this.getUserViewList()
     setTimeout(() => {
       this.$refs.visitUser.getNumber(this.time)
     }, 2000)
@@ -356,43 +358,28 @@ export default {
         }
       }
     }
-    .goodsItem {
-      display: flex;
-      align-items: center;
-      img {
-        width: 60px;
-        height: 60px;
-        margin-right: 6px;
-      }
-      .info {
-        text-align: left;
-        .name {
-          color: black;
-        }
-        .spec {
-          color: #999999;
-          margin-top: 8px;
-        }
-      }
+
+  }
+  .infoItem {
+    img {
+      width: 100px;
+      height: 100px;
     }
-    .userItem {
-      display: flex;
-      align-items: center;
-      img {
-        width: 60px;
-        height: 60px;
-        margin-right: 6px;
-      }
-      .info {
-        text-align: left;
-        .name {
-          color: black;
-        }
-        .phone {
-          color: #999999;
-          margin-top: 8px;
-        }
-      }
+    .title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .userItem {
+    display: flex;
+    img {
+      width: 80px;
+      height: 80px;
+    }
+    .info {
+      margin-left: 10px;
+      margin-top: 10px;
     }
   }
 }

@@ -115,7 +115,7 @@ export default {
       this.listLoading = false
     },
     setChartData(time, data) {
-      const allTime = [...new Array(moment(time[1]).diff(moment(time[0]).subtract(1, 'days'), 'days'))].map((i, idx) => moment(time[0]).startOf('day').add(idx, 'days').format('YYYY-MM-DD'))
+      const allTime = [...new Array(moment(time[1]).diff(moment(time[0]).subtract(1, 'days'), 'days'))].map((i, idx) => moment(time[0]).startOf('day').add(idx, 'days').format('YYYYMMDD'))
       const chartData = {
         timeArray: [],
         userArray: [...new Array(moment(time[1]).diff(moment(time[0]).subtract(1, 'days'), 'days'))].map((i, idx) => 0)
@@ -123,8 +123,8 @@ export default {
       for (let j = 0; j < allTime.length; j++) {
         chartData.timeArray.push(moment(allTime[j]).format('MM.DD'))
         for (let k = 0; k < data.length; k++) {
-          if (allTime[j] === data[k].created_at) {
-            chartData.userArray[j] = data[k].count
+          if (allTime[j] === data[k].date.toString()) {
+            chartData.userArray[j] = data[k].total
           }
         }
       }
